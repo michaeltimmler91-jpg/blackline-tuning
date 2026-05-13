@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackline Tuning Leitstelle</title>
 
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
     <header>
         <div class="logo-area">
             <img src="logo.png" alt="Blackline Tuning Logo">
+
             <div>
                 <h1>BLACKLINE TUNING</h1>
                 <p>Werkstatt Leitstelle</p>
@@ -30,12 +31,14 @@
     <main>
 
         <section id="dashboard" class="page active">
+
             <div class="card">
                 <h2>Dashboard</h2>
                 <p>Aktuelle Übersicht der Blackline Tuning Leitstelle.</p>
             </div>
 
             <div class="grid">
+
                 <div class="card stat-card">
                     <h3>Gespeicherte Aufträge</h3>
                     <span id="openJobs">0</span>
@@ -55,47 +58,43 @@
                     <h3>Gesamtumsatz</h3>
                     <span id="moneyCount">0 $</span>
                 </div>
+
             </div>
+
         </section>
 
         <section id="repair" class="page">
 
             <div class="card">
-                <h2>Reparaturrechner</h2>
+                <h2>4x Reparaturrechner</h2>
+            </div>
 
-                <div class="form-grid">
-                    <input type="text" id="repairCustomer" placeholder="Kunde">
-                    <input type="text" id="repairVehicle" placeholder="Fahrzeug">
-                    <input type="text" id="repairPlate" placeholder="Kennzeichen">
-                    <input type="text" id="repairEmployee" placeholder="Mitarbeiter">
+            <div class="repair-grid">
+
+                <div class="card">
+                    <h3>Rechner 1</h3>
+                    <div id="repairCalculator1"></div>
                 </div>
 
-                <div class="calculator-box">
-                    <h3>Arbeiten auswählen</h3>
-
-                    <div class="repair-add-row">
-                        <select id="repairItemSelect"></select>
-                        <input type="number" id="repairItemAmount" value="1" min="1" placeholder="Menge">
-                        <button onclick="addRepairItem()">Hinzufügen</button>
-                    </div>
-
-                    <div id="selectedRepairItems" class="selected-list"></div>
-
-                    <div class="discount-row">
-                        <label for="repairDiscount">Rabatt in %</label>
-                        <input type="number" id="repairDiscount" value="0" min="0" max="100" oninput="updateRepairTotal()">
-                    </div>
-
-                    <div class="total-box">
-                        Gesamt: <span id="repairTotal">0 $</span>
-                    </div>
-
-                    <button onclick="saveRepair()">Reparatur speichern</button>
+                <div class="card">
+                    <h3>Rechner 2</h3>
+                    <div id="repairCalculator2"></div>
                 </div>
+
+                <div class="card">
+                    <h3>Rechner 3</h3>
+                    <div id="repairCalculator3"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Rechner 4</h3>
+                    <div id="repairCalculator4"></div>
+                </div>
+
             </div>
 
             <div class="card">
-                <h3>Letzte Reparaturen</h3>
+                <h2>Gespeicherte Reparaturen</h2>
                 <div id="repairList"></div>
             </div>
 
@@ -106,17 +105,28 @@
             <div class="card">
                 <h2>Tuningrechner</h2>
 
-                <p>Der Tuningrechner wird später mit deiner Tuning-Preisliste gefüllt.</p>
+                <p>
+                    Der Tuningrechner wird später mit deinem
+                    Tuning-System erweitert.
+                </p>
 
                 <div class="form-grid">
+
                     <input type="text" id="tuningCustomer" placeholder="Kunde">
+
                     <input type="text" id="tuningVehicle" placeholder="Fahrzeug">
+
                     <input type="text" id="tuningPlate" placeholder="Kennzeichen">
+
                     <input type="text" id="tuningEmployee" placeholder="Mitarbeiter">
+
                     <input type="number" id="tuningPrice" placeholder="Preis">
+
                 </div>
 
-                <button onclick="saveTuning()">Tuning speichern</button>
+                <button onclick="saveTuning()">
+                    Tuning speichern
+                </button>
             </div>
 
             <div class="card">
@@ -129,11 +139,18 @@
         <section id="board" class="page">
 
             <div class="card">
+
                 <h2>Schwarzes Brett</h2>
 
-                <textarea id="boardText" placeholder="Notiz schreiben..."></textarea>
+                <textarea
+                    id="boardText"
+                    placeholder="Notiz schreiben..."
+                ></textarea>
 
-                <button onclick="saveBoard()">Speichern</button>
+                <button onclick="saveBoard()">
+                    Speichern
+                </button>
+
             </div>
 
         </section>
@@ -141,13 +158,34 @@
         <section id="stats" class="page">
 
             <div class="card">
+
                 <h2>Statistik</h2>
 
-                <p>Reparaturen: <span id="statsRepairs">0</span></p>
-                <p>Tuning: <span id="statsTunings">0</span></p>
-                <p>Umsatz Reparatur: <span id="statsRepairMoney">0 $</span></p>
-                <p>Umsatz Tuning: <span id="statsTuningMoney">0 $</span></p>
-                <p>Gesamtumsatz: <span id="statsMoney">0 $</span></p>
+                <p>
+                    Reparaturen:
+                    <span id="statsRepairs">0</span>
+                </p>
+
+                <p>
+                    Tuning:
+                    <span id="statsTunings">0</span>
+                </p>
+
+                <p>
+                    Umsatz Reparatur:
+                    <span id="statsRepairMoney">0 $</span>
+                </p>
+
+                <p>
+                    Umsatz Tuning:
+                    <span id="statsTuningMoney">0 $</span>
+                </p>
+
+                <p>
+                    Gesamtumsatz:
+                    <span id="statsMoney">0 $</span>
+                </p>
+
             </div>
 
         </section>
@@ -155,7 +193,7 @@
     </main>
 
     <script src="config.js?v=1"></script>
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
 
 </body>
 </html>
