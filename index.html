@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blackline Tuning</title>
+    <title>Blackline Tuning Leitstelle</title>
 
-    <link rel="stylesheet" href="style.css?v=1">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 
     <header>
         <div class="logo-area">
-            <img src="logo.png" alt="Blackline Logo">
+            <img src="logo.png" alt="Blackline Tuning Logo">
             <div>
                 <h1>BLACKLINE TUNING</h1>
                 <p>Werkstatt Leitstelle</p>
@@ -31,32 +31,30 @@
 
         <section id="dashboard" class="page active">
             <div class="card">
-                <h2>Willkommen</h2>
-                <p>Blackline Tuning Leitstelle</p>
+                <h2>Dashboard</h2>
+                <p>Aktuelle Übersicht der Blackline Tuning Leitstelle.</p>
             </div>
 
             <div class="grid">
-
-                <div class="card">
-                    <h3>Offene Aufträge</h3>
+                <div class="card stat-card">
+                    <h3>Gespeicherte Aufträge</h3>
                     <span id="openJobs">0</span>
                 </div>
 
-                <div class="card">
+                <div class="card stat-card">
                     <h3>Reparaturen</h3>
                     <span id="repairCount">0</span>
                 </div>
 
-                <div class="card">
+                <div class="card stat-card">
                     <h3>Tuning-Aufträge</h3>
                     <span id="tuningCount">0</span>
                 </div>
 
-                <div class="card">
+                <div class="card stat-card">
                     <h3>Gesamtumsatz</h3>
                     <span id="moneyCount">0 $</span>
                 </div>
-
             </div>
         </section>
 
@@ -65,11 +63,35 @@
             <div class="card">
                 <h2>Reparaturrechner</h2>
 
-                <input type="text" id="repairCustomer" placeholder="Kunde">
-                <input type="text" id="repairVehicle" placeholder="Fahrzeug">
-                <input type="number" id="repairPrice" placeholder="Preis">
+                <div class="form-grid">
+                    <input type="text" id="repairCustomer" placeholder="Kunde">
+                    <input type="text" id="repairVehicle" placeholder="Fahrzeug">
+                    <input type="text" id="repairPlate" placeholder="Kennzeichen">
+                    <input type="text" id="repairEmployee" placeholder="Mitarbeiter">
+                </div>
 
-                <button onclick="saveRepair()">Reparatur speichern</button>
+                <div class="calculator-box">
+                    <h3>Arbeiten auswählen</h3>
+
+                    <div class="repair-add-row">
+                        <select id="repairItemSelect"></select>
+                        <input type="number" id="repairItemAmount" value="1" min="1" placeholder="Menge">
+                        <button onclick="addRepairItem()">Hinzufügen</button>
+                    </div>
+
+                    <div id="selectedRepairItems" class="selected-list"></div>
+
+                    <div class="discount-row">
+                        <label for="repairDiscount">Rabatt in %</label>
+                        <input type="number" id="repairDiscount" value="0" min="0" max="100" oninput="updateRepairTotal()">
+                    </div>
+
+                    <div class="total-box">
+                        Gesamt: <span id="repairTotal">0 $</span>
+                    </div>
+
+                    <button onclick="saveRepair()">Reparatur speichern</button>
+                </div>
             </div>
 
             <div class="card">
@@ -84,9 +106,15 @@
             <div class="card">
                 <h2>Tuningrechner</h2>
 
-                <input type="text" id="tuningCustomer" placeholder="Kunde">
-                <input type="text" id="tuningVehicle" placeholder="Fahrzeug">
-                <input type="number" id="tuningPrice" placeholder="Preis">
+                <p>Der Tuningrechner wird später mit deiner Tuning-Preisliste gefüllt.</p>
+
+                <div class="form-grid">
+                    <input type="text" id="tuningCustomer" placeholder="Kunde">
+                    <input type="text" id="tuningVehicle" placeholder="Fahrzeug">
+                    <input type="text" id="tuningPlate" placeholder="Kennzeichen">
+                    <input type="text" id="tuningEmployee" placeholder="Mitarbeiter">
+                    <input type="number" id="tuningPrice" placeholder="Preis">
+                </div>
 
                 <button onclick="saveTuning()">Tuning speichern</button>
             </div>
@@ -117,15 +145,17 @@
 
                 <p>Reparaturen: <span id="statsRepairs">0</span></p>
                 <p>Tuning: <span id="statsTunings">0</span></p>
-                <p>Umsatz: <span id="statsMoney">0 $</span></p>
-
+                <p>Umsatz Reparatur: <span id="statsRepairMoney">0 $</span></p>
+                <p>Umsatz Tuning: <span id="statsTuningMoney">0 $</span></p>
+                <p>Gesamtumsatz: <span id="statsMoney">0 $</span></p>
             </div>
 
         </section>
 
     </main>
 
-    <script src="script.js?v=1"></script>
+    <script src="config.js?v=1"></script>
+    <script src="script.js?v=2"></script>
 
 </body>
 </html>
