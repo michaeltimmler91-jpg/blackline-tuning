@@ -1,6 +1,15 @@
 const pages =
 document.querySelectorAll(".page");
 
+const REPAIR_CALCULATOR_COUNT = 4;
+
+let repairCalculators = [];
+let repairs =
+JSON.parse(localStorage.getItem("blackline_repairs")) || [];
+
+let tunings =
+JSON.parse(localStorage.getItem("blackline_tunings")) || [];
+
 function showPage(pageId) {
 
     pages.forEach(page => {
@@ -12,151 +21,212 @@ function showPage(pageId) {
     .classList.add("active");
 }
 
-let repairs =
-JSON.parse(localStorage.getItem("blackline_repairs")) || [];
+function createEmptyRepairCalculator() {
 
-let tunings =
-JSON.parse(localStorage.getItem("blackline_tunings")) || [];
-
-let currentRepairItems = [];
-
-function loadRepairItems() {
-
-    const select =
-    document.getElementById("repairItemSelect");
-
-    select.innerHTML = "";
-
-    BLACKLINE_CONFIG.repairItems.forEach((item, index) => {
-
-        const option =
-        document.createElement("option");
-
-        option.value = index;
-
-        option.innerHTML =
-        `${item.name} (${item.price}$)`;
-
-        select.appendChild(option);
-    });
+    return {
+        customer: "",
+        vehicle: "",
+        plate: "",
+        employee: "",
+        discount: 0,
+        items: []
+    };
 }
 
-function addRepairItem() {
+function initRepairCalculators() {
+
+    repairCalculators = [];
+
+    for(let i = 0; i < REPAIR_CALCULATOR_COUNT; i++) {
+        repairCalculators.push(createEmptyRepairCalculator());
+    }
+
+    renderRepairCalculators();
+}
+
+function renderRepairCalculators() {
+
+    for(let i = 0; i < REPAIR_CALCULATOR_COUNT; i++) {
+
+        const box =
+        document.getElementById("repairCalculator" + (i + 1));
+
+        const calc =
+        repairCalculators[i];
+
+        let options = "";
+
+        BLACKLINE_CONFIG.repairItems.forEach((item, index) => {
+            options += `
+                <option value="${index}">
+                    ${item.name} (${item.price}$)
+                </option>
+            `;
+        });
+
+        let selectedItems = "";
+
+        calc.items.forEach((item, itemIndex) => {
+            selectedItems += `
+                <div class="job-item">
+                    <b>${item.name}</b><br>
+                    Menge: ${item.amount}<br>
+                    Einzelpreis: ${item.price}$<br>
+                    Gesamt: ${item.total}$<br>
+
+                    <button onclick="removeRepairItem(${i}, ${itemIndex})">
+                        Entfernen
+                    </button>
+                </div>
+            `;
+        });
+
+        box.innerHTML = `
+            <input
+                type="text"
+                placeholder="Kunde"
+                value="${calc.customer}"
+                oninput="repairCalculators[${i}].customer = this.value"
+            >
+
+            <input
+                type="text"
+                placeholder="Fahrzeug"
+                value="${calc.vehicle}"
+                oninput="repairCalculators[${i}].vehicle = this.value"
+            >
+
+            <input
+                type="text"
+                placeholder="Kennzeichen"
+                value="${calc.plate}"
+                oninput="repairCalculators[${i}].plate = this.value"
+            >
+
+            <input
+                type="text"
+                placeholder="Mitarbeiter"
+                value="${calc.employee}"
+                oninput="repairCalculators[${i}].employee = this.value"
+            >
+
+            <div class="repair-add-row">
+                <select id="repairSelect${i}">
+                    ${options}
+                </select>
+
+                <input
+                    type="number"
+                    id="repairAmount${i}"
+                    value="1"
+                    min="1"
+                >
+
+                <button onclick="addRepairItem(${i})">
+                    Hinzuf&uuml;gen
+                </button>
+            </div>
+
+            <div class="selected-list">
+                ${selectedItems}
+            </div>
+
+            <div class="discount-row">
+                <label>Rabatt in %</label>
+
+                <input
+                    type="number"
+                    value="${calc.discount}"
+                    min="0"
+                    max="100"
+                    oninput="repairCalculators[${i}].discount = Number(this.value); renderRepairCalculators();"
+                >
+            </div>
+
+            <div class="total-box">
+                Gesamt:
+                <span>${calculateRepairTotal(calc).toFixed(0)} $</span>
+            </div>
+
+            <button onclick="saveRepair(${i})">
+                Reparatur speichern
+            </button>
+
+            <button onclick="resetRepairCalculator(${i})">
+                Rechner leeren
+            </button>
+        `;
+    }
+}
+
+function addRepairItem(calcIndex) {
 
     const select =
-    document.getElementById("repairItemSelect");
+    document.getElementById("repairSelect" + calcIndex);
 
     const amount =
-    Number(document.getElementById("repairItemAmount").value);
+    Number(document.getElementById("repairAmount" + calcIndex).value);
 
     const item =
     BLACKLINE_CONFIG.repairItems[select.value];
 
-    currentRepairItems.push({
+    repairCalculators[calcIndex].items.push({
         name: item.name,
         price: item.price,
         amount: amount,
         total: item.price * amount
     });
 
-    renderCurrentRepairItems();
-    updateRepairTotal();
+    renderRepairCalculators();
 }
 
-function renderCurrentRepairItems() {
+function removeRepairItem(calcIndex, itemIndex) {
 
-    const container =
-    document.getElementById("selectedRepairItems");
+    repairCalculators[calcIndex].items.splice(itemIndex, 1);
 
-    container.innerHTML = "";
-
-    currentRepairItems.forEach((item, index) => {
-
-        container.innerHTML += `
-            <div class="job-item">
-                <b>${item.name}</b><br>
-                Menge: ${item.amount}<br>
-                Einzelpreis: ${item.price}$<br>
-                Gesamt: ${item.total}$<br>
-
-                <button onclick="removeRepairItem(${index})">
-                    Entfernen
-                </button>
-            </div>
-        `;
-    });
+    renderRepairCalculators();
 }
 
-function removeRepairItem(index) {
-
-    currentRepairItems.splice(index, 1);
-
-    renderCurrentRepairItems();
-    updateRepairTotal();
-}
-
-function updateRepairTotal() {
-
-    const discount =
-    Number(document.getElementById("repairDiscount").value);
+function calculateRepairTotal(calc) {
 
     let total = 0;
 
-    currentRepairItems.forEach(item => {
+    calc.items.forEach(item => {
         total += item.total;
     });
 
-    const finalTotal =
-    total - (total * (discount / 100));
+    const discount =
+    Number(calc.discount) || 0;
 
-    document.getElementById("repairTotal").innerText =
-    finalTotal.toFixed(0) + " $";
+    return total - (total * (discount / 100));
 }
 
-function saveRepair() {
+function saveRepair(calcIndex) {
 
-    const customer =
-    document.getElementById("repairCustomer").value;
-
-    const vehicle =
-    document.getElementById("repairVehicle").value;
-
-    const plate =
-    document.getElementById("repairPlate").value;
-
-    const employee =
-    document.getElementById("repairEmployee").value;
-
-    const discount =
-    Number(document.getElementById("repairDiscount").value);
+    const calc =
+    repairCalculators[calcIndex];
 
     if(
-        !customer ||
-        !vehicle ||
-        !employee ||
-        currentRepairItems.length === 0
+        !calc.customer ||
+        !calc.vehicle ||
+        !calc.employee ||
+        calc.items.length === 0
     ) {
-        alert("Bitte alles ausfüllen");
+        alert("Bitte Kunde, Fahrzeug, Mitarbeiter und mindestens eine Arbeit eintragen.");
         return;
     }
 
-    let total = 0;
-
-    currentRepairItems.forEach(item => {
-        total += item.total;
-    });
-
-    total =
-    total - (total * (discount / 100));
+    const total =
+    calculateRepairTotal(calc);
 
     repairs.push({
-        customer,
-        vehicle,
-        plate,
-        employee,
-        discount,
-        items: currentRepairItems,
-        total,
+        customer: calc.customer,
+        vehicle: calc.vehicle,
+        plate: calc.plate,
+        employee: calc.employee,
+        discount: calc.discount,
+        items: calc.items,
+        total: total,
         time: new Date().toLocaleString()
     });
 
@@ -165,18 +235,20 @@ function saveRepair() {
         JSON.stringify(repairs)
     );
 
-    document.getElementById("repairCustomer").value = "";
-    document.getElementById("repairVehicle").value = "";
-    document.getElementById("repairPlate").value = "";
-    document.getElementById("repairEmployee").value = "";
-    document.getElementById("repairDiscount").value = 0;
+    repairCalculators[calcIndex] =
+    createEmptyRepairCalculator();
 
-    currentRepairItems = [];
-
-    renderCurrentRepairItems();
+    renderRepairCalculators();
     renderRepairs();
-    updateRepairTotal();
     updateStats();
+}
+
+function resetRepairCalculator(calcIndex) {
+
+    repairCalculators[calcIndex] =
+    createEmptyRepairCalculator();
+
+    renderRepairCalculators();
 }
 
 function renderRepairs() {
@@ -191,7 +263,6 @@ function renderRepairs() {
         let itemList = "";
 
         repair.items.forEach(item => {
-
             itemList += `
                 • ${item.name}
                 (${item.amount}x)
@@ -253,7 +324,7 @@ function saveTuning() {
         !employee ||
         !price
     ) {
-        alert("Bitte alles ausfüllen");
+        alert("Bitte alles ausf&uuml;llen");
         return;
     }
 
@@ -381,13 +452,12 @@ function loadBoard() {
     localStorage.getItem("blackline_board");
 
     if(saved) {
-
         document.getElementById("boardText").value =
         saved;
     }
 }
 
-loadRepairItems();
+initRepairCalculators();
 renderRepairs();
 renderTunings();
 updateStats();
