@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackline Tuning</title>
+
+    <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="Blackline Logo">
+            <div>
+                <h1>BLACKLINE TUNING</h1>
+                <p>Werkstatt Leitstelle</p>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <button onclick="showPage('dashboard')">Dashboard</button>
+        <button onclick="showPage('repair')">Reparatur</button>
+        <button onclick="showPage('tuning')">Tuning</button>
+        <button onclick="showPage('board')">Schwarzes Brett</button>
+        <button onclick="showPage('stats')">Statistik</button>
+    </nav>
+
+    <main>
+
+        <section id="dashboard" class="page active">
+            <div class="card">
+                <h2>Willkommen</h2>
+                <p>Blackline Tuning Leitstelle</p>
+            </div>
+
+            <div class="grid">
+
+                <div class="card">
+                    <h3>Offene Aufträge</h3>
+                    <span id="openJobs">0</span>
+                </div>
+
+                <div class="card">
+                    <h3>Reparaturen</h3>
+                    <span id="repairCount">0</span>
+                </div>
+
+                <div class="card">
+                    <h3>Tuning-Aufträge</h3>
+                    <span id="tuningCount">0</span>
+                </div>
+
+                <div class="card">
+                    <h3>Gesamtumsatz</h3>
+                    <span id="moneyCount">0 $</span>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="repair" class="page">
+
+            <div class="card">
+                <h2>Reparaturrechner</h2>
+
+                <input type="text" id="repairCustomer" placeholder="Kunde">
+                <input type="text" id="repairVehicle" placeholder="Fahrzeug">
+                <input type="number" id="repairPrice" placeholder="Preis">
+
+                <button onclick="saveRepair()">Reparatur speichern</button>
+            </div>
+
+            <div class="card">
+                <h3>Letzte Reparaturen</h3>
+                <div id="repairList"></div>
+            </div>
+
+        </section>
+
+        <section id="tuning" class="page">
+
+            <div class="card">
+                <h2>Tuningrechner</h2>
+
+                <input type="text" id="tuningCustomer" placeholder="Kunde">
+                <input type="text" id="tuningVehicle" placeholder="Fahrzeug">
+                <input type="number" id="tuningPrice" placeholder="Preis">
+
+                <button onclick="saveTuning()">Tuning speichern</button>
+            </div>
+
+            <div class="card">
+                <h3>Letzte Tuning-Aufträge</h3>
+                <div id="tuningList"></div>
+            </div>
+
+        </section>
+
+        <section id="board" class="page">
+
+            <div class="card">
+                <h2>Schwarzes Brett</h2>
+
+                <textarea id="boardText" placeholder="Notiz schreiben..."></textarea>
+
+                <button onclick="saveBoard()">Speichern</button>
+            </div>
+
+        </section>
+
+        <section id="stats" class="page">
+
+            <div class="card">
+                <h2>Statistik</h2>
+
+                <p>Reparaturen: <span id="statsRepairs">0</span></p>
+                <p>Tuning: <span id="statsTunings">0</span></p>
+                <p>Umsatz: <span id="statsMoney">0 $</span></p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="script.js?v=1"></script>
+
+</body>
+</html>
